@@ -138,8 +138,8 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
             '$rootScope',
             '$location',
             function($rootScope, $location) {
-               
                 if ('auth0' === this.authType) {
+                    
                     var Lock = new __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a(
                         this.clientID,
                         this.domain,
@@ -197,6 +197,11 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                         })(functions[i]);
                     }
 
+                    lock.exit = function(param){
+                        lock.logout(param);
+                        localStorage.setItem('id_token', '');
+                    }
+
                     lock.interceptHash = function() {
                         if (typeof __WEBPACK_IMPORTED_MODULE_3_auth0_js___default.a.WebAuth !== 'function') {
                             throw new Error(
@@ -219,8 +224,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                                 var hash =
                                     $location.hash() || window.location.hash;
 
-                                webAuth.parseHash(
-                                    {
+                                webAuth.parseHash({
                                         hash: hash,
                                         _idTokenVerification: shouldVerifyIdToken
                                     },
@@ -243,6 +247,20 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                         });
                     };
 
+
+
+                    lock.on('authenticated', function(authResult) {
+                        localStorage.setItem('id_token', authResult.idToken);
+                        lock.getUserInfo(authResult.accessToken, function(error, profile) {
+                            if (error) {
+                                console.log(error);
+                            }
+                            localStorage.setItem('profile', JSON.stringify(profile));
+                        });
+                        
+                    });
+
+
                     return lock;
                 } else if ('keycloak' === this.authType) {
                     var keycloak = __WEBPACK_IMPORTED_MODULE_1_keycloak_js___default()(this.options);
@@ -255,7 +273,6 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
             }
         ];
     });
-
 
 /***/ }),
 /* 1 */

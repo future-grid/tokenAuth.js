@@ -59,8 +59,8 @@ angular
             '$rootScope',
             '$location',
             function($rootScope, $location) {
-               
                 if ('auth0' === this.authType) {
+                    
                     var Lock = new Auth0Lock(
                         this.clientID,
                         this.domain,
@@ -118,6 +118,11 @@ angular
                         })(functions[i]);
                     }
 
+                    lock.exit = function(param){
+                        lock.logout(param);
+                        localStorage.setItem('id_token', '');
+                    }
+
                     lock.interceptHash = function() {
                         if (typeof auth0.WebAuth !== 'function') {
                             throw new Error(
@@ -140,8 +145,7 @@ angular
                                 var hash =
                                     $location.hash() || window.location.hash;
 
-                                webAuth.parseHash(
-                                    {
+                                webAuth.parseHash({
                                         hash: hash,
                                         _idTokenVerification: shouldVerifyIdToken
                                     },
@@ -163,6 +167,20 @@ angular
                             }
                         });
                     };
+
+
+
+                    lock.on('authenticated', function(authResult) {
+                        localStorage.setItem('id_token', authResult.idToken);
+                        lock.getUserInfo(authResult.accessToken, function(error, profile) {
+                            if (error) {
+                                console.log(error);
+                            }
+                            localStorage.setItem('profile', JSON.stringify(profile));
+                        });
+                        
+                    });
+
 
                     return lock;
                 } else if ('keycloak' === this.authType) {
