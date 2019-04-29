@@ -139,7 +139,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
             '$location',
             function($rootScope, $location) {
                 if ('auth0' === this.authType) {
-                    
+
                     var Lock = new __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a(
                         this.clientID,
                         this.domain,
@@ -197,7 +197,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                         })(functions[i]);
                     }
 
-                    lock.exit = function(param){
+                    lock.exit = function(param) {
                         lock.logout(param);
                         localStorage.setItem('id_token', '');
                     }
@@ -257,15 +257,35 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                             }
                             localStorage.setItem('profile', JSON.stringify(profile));
                         });
-                        
+
                     });
 
 
                     return lock;
                 } else if ('keycloak' === this.authType) {
+
+
                     var keycloak = __WEBPACK_IMPORTED_MODULE_1_keycloak_js___default()(this.options);
-                    keycloak.init({ flow: 'implicit' });
+
+                    // set redirectUri from options. just in case something wrong on server side.
+                    keycloak.init({ "redirectUri": this.options.redirect_uri }).success(function(authenticated) {
+                        console.debug(authenticated ? 'authenticated' : 'not authenticated');
+                        if (authenticated) {
+                            // put token into local storage
+                            localStorage.setItem('id_token', keycloak.token);
+                        }
+
+
+                    }).error(function() {
+                        console.warn("failed to initialized!");
+                    });
                     keycloak["show"] = keycloak.login;
+                    keycloak["exit"] = function(param){
+                        this.logout({
+                            redirectUri : param.returnTo
+                        });
+                        localStorage.setItem('id_token', '');
+                    };
                     return keycloak;
                 } else {
                     return null;

@@ -60,7 +60,7 @@ angular
             '$location',
             function($rootScope, $location) {
                 if ('auth0' === this.authType) {
-                    
+
                     var Lock = new Auth0Lock(
                         this.clientID,
                         this.domain,
@@ -118,7 +118,7 @@ angular
                         })(functions[i]);
                     }
 
-                    lock.exit = function(param){
+                    lock.exit = function(param) {
                         lock.logout(param);
                         localStorage.setItem('id_token', '');
                     }
@@ -178,15 +178,35 @@ angular
                             }
                             localStorage.setItem('profile', JSON.stringify(profile));
                         });
-                        
+
                     });
 
 
                     return lock;
                 } else if ('keycloak' === this.authType) {
+
+
                     var keycloak = Keycloak(this.options);
-                    keycloak.init({ flow: 'implicit' });
+
+                    // set redirectUri from options. just in case something wrong on server side.
+                    keycloak.init({ "redirectUri": this.options.redirect_uri }).success(function(authenticated) {
+                        console.debug(authenticated ? 'authenticated' : 'not authenticated');
+                        if (authenticated) {
+                            // put token into local storage
+                            localStorage.setItem('id_token', keycloak.token);
+                        }
+
+
+                    }).error(function() {
+                        console.warn("failed to initialized!");
+                    });
                     keycloak["show"] = keycloak.login;
+                    keycloak["exit"] = function(param){
+                        this.logout({
+                            redirectUri : param.returnTo
+                        });
+                        localStorage.setItem('id_token', '');
+                    };
                     return keycloak;
                 } else {
                     return null;

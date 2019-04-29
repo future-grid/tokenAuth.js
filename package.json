@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "build:watch": "webpack --progress --colors --watch",
-    "dev": "live-server ./example --host=localhost --port=4050 --mount=/dist:dist --mount=/node_modules:node_modules"
+    "dev:auth0": "live-server ./examples/auth0 --host=localhost --port=4050 --mount=/dist:dist --mount=/node_modules:node_modules",
+    "dev:keycloak": "live-server ./examples/keycloak --host=localhost --port=4050 --mount=/dist:dist --mount=/node_modules:node_modules"
   },
   "repository": {
     "type": "git",
