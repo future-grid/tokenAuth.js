@@ -1,0 +1,30 @@
+{
+  "name": "tokenauth",
+  "description": "fgp token based auth lib",
+  "main": "index.js",
+  "authors": [
+    "eric@future-grid.com.au"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "auth",
+    "auth0",
+    "keycloak",
+    "fgp",
+    "future-grid"
+  ],
+  "homepage": "https://github.com/future-grid/tokenAuth.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.5.7",
+    "auth0-js": "^9.0.0",
+    "auth0-lock": "^11.15.0",
+    "keycloak-js": "^5.0.0"
+  }
+}

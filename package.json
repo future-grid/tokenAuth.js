@@ -31,7 +31,7 @@
     "webpack": "^3.1.0"
   },
   "dependencies": {
-    "angular": "^1.6.8",
+    "angular": "1.5.7",
     "auth0-js": "^9.0.0",
     "auth0-lock": "^11.15.0",
     "keycloak-js": "^5.0.0"
