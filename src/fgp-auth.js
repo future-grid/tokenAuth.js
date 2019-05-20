@@ -185,6 +185,7 @@ angular
                     return lock;
                 } else if ('keycloak' === this.authType) {
 
+                    var authServerUrl = this.options["auth-server-url"];
 
                     var keycloak = Keycloak(this.options);
 
@@ -200,6 +201,8 @@ angular
                     }).error(function() {
                         console.warn("failed to initialized!");
                     });
+
+                    keycloak["authServerUrl"] = authServerUrl;
                     keycloak["show"] = keycloak.login;
                     keycloak["exit"] = function(param){
                         this.logout({

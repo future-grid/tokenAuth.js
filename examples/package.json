@@ -1,0 +1,36 @@
+{
+  "name": "tokenauth",
+  "version": "1.0.0",
+  "description": "fgp token based auth lib",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server -p 80 ./keycloak/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/future-grid/tokenAuth.js.git"
+  },
+  "keywords": [
+    "auth",
+    "auth0",
+    "keycloak",
+    "fgp",
+    "future-grid"
+  ],
+  "author": "eric@future-grid.com.au",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/future-grid/tokenAuth.js/issues"
+  },
+  "homepage": "https://github.com/future-grid/tokenAuth.js#readme",
+  "devDependencies": {
+    "babili-webpack-plugin": "^0.1.2",
+    "webpack": "^3.1.0"
+  },
+  "dependencies": {
+    "angular": "1.5.7",
+    "auth0-js": "^9.0.0",
+    "auth0-lock": "^11.15.0",
+    "keycloak-js": "^5.0.0"
+  }
+}

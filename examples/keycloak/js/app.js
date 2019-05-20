@@ -19,7 +19,7 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
             };
 
             $scope.logout = function() {
-                fgpTokenAuth.exit({ returnTo: 'http://localhost:4050/#/login' });
+                fgpTokenAuth.exit({ returnTo: 'https://compass.dev.welnet.co.nz/#/login' });
                 $scope.authorized = false;
             };
 
@@ -29,6 +29,7 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
             }, function(newValue) {
                 if (newValue && newValue != '') {
                     $scope.authorized = true;
+                    $scope.token = localStorage.getItem('id_token');
                 }
             });
 
@@ -75,22 +76,34 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
      *   init keycloak. 
      **/
     fgpTokenAuthProvider.initKeycloak({
-        clientID: 'shinehub',
+        clientID: 'wel',
         options: {
-                "client_id": 'shinehub',
-                "realm": "shinehub",
-                "redirect_uri": "http://localhost:4050/#/main",
-                "auth-server-url": "https://auth.fgp.io/auth",
-                "ssl-required": "external",
-                "resource": "shinehub",
-                "verify-token-audience": true,
-                "credentials": {
-                    "secret": "9b5ffcd1-5763-43ce-acbb-b86a22fae3e0"
-                },
-                "use-resource-role-mappings": true,
-                "confidential-port": 0,
-                "policy-enforcer": {}
+                // "client_id": 'shinehub',
+                // "realm": "shinehub",
+                // "redirect_uri": "http://localhost:4050/#/main",
+                // "auth-server-url": "https://auth.fgp.io/auth",
+                // "ssl-required": "external",
+                // "resource": "shinehub",
+                // "verify-token-audience": true,
+                // "credentials": {
+                //     "secret": "9b5ffcd1-5763-43ce-acbb-b86a22fae3e0"
+                // },
+                // "use-resource-role-mappings": true,
+                // "confidential-port": 0,
+                // "policy-enforcer": {}
 
+                    "realm": "futuregrid",
+                    "auth-server-url": "http://localhost:8080/auth",
+                    "ssl-required": "external",
+                    "redirect_uri": "https://localhost:4050/#/main",
+                    "resource": "wel",
+                    "verify-token-audience": true,
+                    "credentials": {
+                      "secret": "93e79a03-e881-4c8d-9fb6-6286ed2314d5"
+                    },
+                    "confidential-port": 0,
+                    "policy-enforcer": {},
+                    "client_id": 'wel',
         }
     });
 }).run(function(fgpTokenAuth, $timeout, $state) {
