@@ -95,7 +95,7 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
                     "realm": "futuregrid",
                     "auth-server-url": "http://localhost:8080/auth",
                     "ssl-required": "external",
-                    "redirect_uri": "https://localhost:4050/#/main",
+                    "redirect_uri": "http://localhost:4050/#/main",
                     "resource": "wel",
                     "verify-token-audience": true,
                     "credentials": {
