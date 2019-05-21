@@ -92,18 +92,19 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
                 // "confidential-port": 0,
                 // "policy-enforcer": {}
 
-                    "realm": "futuregrid",
-                    "auth-server-url": "http://localhost:8080/auth",
+                    "realm": "fgp",
+                    "auth-server-url": "https://compass-auth.dev.welnet.co.nz/auth",
                     "ssl-required": "external",
-                    "redirect_uri": "http://localhost:4050/#/main",
+                    "redirect_uri": "https://compass.dev.welnet.co.nz/#/main",
                     "resource": "wel",
                     "verify-token-audience": true,
                     "credentials": {
-                      "secret": "93e79a03-e881-4c8d-9fb6-6286ed2314d5"
+                      "secret": "76a0dc3a-81ad-4e0b-af73-1f7cd88ac87e"
                     },
                     "confidential-port": 0,
                     "policy-enforcer": {},
-                    "client_id": 'wel',
+                    "client_id": 'wel'
+
         }
     });
 }).run(function(fgpTokenAuth, $timeout, $state) {
