@@ -187,7 +187,7 @@ angular
                     var authServerUrl = this.options["auth-server-url"];
                     var keycloak = Keycloak(this.options);
                     // set redirectUri from options. just in case something wrong on server side.
-                    keycloak.init({"onLoad": 'login-required', "redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl}).success(function(authenticated) {
+                    keycloak.init({"redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl}).success(function(authenticated) {
                         console.debug(authenticated ? 'authenticated' : 'not authenticated');
                         if (authenticated) {
                             // put token into local storage
