@@ -273,7 +273,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                             localStorage.setItem('id_token', keycloak.token);
                             // try to get user info
                             keycloak.loadUserInfo().success(function(userInfo) {
-                                debugger;
+                                localStorage.setItem('userInfo', userInfo);
                             }).error(function() {
                                 console.error('Failed to load user info');
                             });
@@ -292,6 +292,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                             redirectUri : param.returnTo
                         });
                         localStorage.setItem('id_token', '');
+                        localStorage.setItem('userInfo', null);
                     };
                     return keycloak;
                 } else {

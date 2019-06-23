@@ -194,7 +194,7 @@ angular
                             localStorage.setItem('id_token', keycloak.token);
                             // try to get user info
                             keycloak.loadUserInfo().success(function(userInfo) {
-                                debugger;
+                                localStorage.setItem('userInfo', userInfo);
                             }).error(function() {
                                 console.error('Failed to load user info');
                             });
@@ -213,6 +213,7 @@ angular
                             redirectUri : param.returnTo
                         });
                         localStorage.setItem('id_token', '');
+                        localStorage.setItem('userInfo', null);
                     };
                     return keycloak;
                 } else {
