@@ -194,7 +194,7 @@ angular
                             localStorage.setItem('id_token', keycloak.token);
                             // try to get user info
                             keycloak.loadUserInfo().success(function(userInfo) {
-                                localStorage.setItem('userInfo', userInfo);
+                                localStorage.setItem('userInfo', userInfo.name);
                             }).error(function() {
                                 console.error('Failed to load user info');
                             });
