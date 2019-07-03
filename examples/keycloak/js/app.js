@@ -91,35 +91,33 @@ angular.module('helloworld', ['fgpAuth', 'ui.router']).config(function($statePro
                 // "use-resource-role-mappings": true,
                 // "confidential-port": 0,
                 // "policy-enforcer": {}
-
                     "realm": "fgp",
-                    "auth-server-url": "https://compass-auth.dev.welnet.co.nz/auth",
+                    "auth-server-url": "https://compass-auth.welnet.co.nz/auth",
+                    "redirect_uri": "http://localhost:4090/#/main",
                     "ssl-required": "external",
-                    "redirect_uri": "https://compass.dev.welnet.co.nz/#/main",
                     "resource": "wel",
                     "verify-token-audience": true,
                     "credentials": {
-                      "secret": "76a0dc3a-81ad-4e0b-af73-1f7cd88ac87e"
+                    //   "secret-jwt": {
+                        "secret": "59bbbe8b-f483-45ac-b067-5fec9465005e"
+                    //   }
                     },
                     "confidential-port": 0,
-                    "policy-enforcer": {},
-                    "client_id": 'wel'
+                    "policy-enforcer": {}
 
         }
     });
 }).run(function(fgpTokenAuth, $timeout, $state) {
 
     fgpTokenAuth.onAuthSuccess = function(){
+        debugger;
         console.info(fgpTokenAuth.idToken);
-        //redirect to main page
-        $timeout(function(){
-            $state.go("app.main");
-        });
         //
     };
 
     fgpTokenAuth.onAuthError = function(){
         //redirect to login page
+        debugger;
     }
 
     fgpTokenAuth.onAuthLogout = function(){

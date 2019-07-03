@@ -187,11 +187,21 @@ angular
                     var authServerUrl = this.options["auth-server-url"];
                     var keycloak = Keycloak(this.options);
                     // set redirectUri from options. just in case something wrong on server side.
-                    keycloak.init({"redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl}).success(function(authenticated) {
+                    var initOptions = {"redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl};
+                    var token = localStorage.getItem('auth_token');
+                    var refreshToken = localStorage.getItem('refresh_token');
+
+                    if(token && refreshToken){
+                        initOptions.token = token;
+                        initOptions.refreshToken = refreshToken;
+                    }
+
+                    keycloak.init().success(function(authenticated) {
                         console.debug(authenticated ? 'authenticated' : 'not authenticated');
                         if (authenticated) {
                             // put token into local storage
-                            localStorage.setItem('id_token', keycloak.token);
+                            localStorage.setItem('auth_token', keycloak.token);
+                            localStorage.setItem('refresh_token', keycloak.refershToken);
                             // try to get user info
                             keycloak.loadUserInfo().success(function(userInfo) {
                                 localStorage.setItem('userInfo', userInfo.name);
@@ -200,7 +210,6 @@ angular
                             });
 
                         }
-
                         //
                     }).error(function() {
                         console.warn("failed to initialized!");

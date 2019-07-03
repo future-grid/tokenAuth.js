@@ -4,7 +4,7 @@
   "description": "fgp token based auth lib",
   "main": "index.js",
   "scripts": {
-    "serve": "http-server -p 80 ./keycloak/"
+    "serve": "http-server -p 4090 ./keycloak/"
   },
   "repository": {
     "type": "git",
