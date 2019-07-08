@@ -214,7 +214,7 @@ angular
                     }).error(function() {
                         console.warn("failed to initialized!");
                     });
-
+                    keycloak["timeSkew"] = 0;
                     keycloak["authServerUrl"] = authServerUrl;
                     keycloak["show"] = keycloak.login;
                     keycloak["exit"] = function(param){

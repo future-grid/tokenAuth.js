@@ -293,7 +293,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                     }).error(function() {
                         console.warn("failed to initialized!");
                     });
-
+                    keycloak["timeSkew"] = 0;
                     keycloak["authServerUrl"] = authServerUrl;
                     keycloak["show"] = keycloak.login;
                     keycloak["exit"] = function(param){
