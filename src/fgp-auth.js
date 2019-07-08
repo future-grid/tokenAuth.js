@@ -201,7 +201,7 @@ angular
                         if (authenticated) {
                             // put token into local storage
                             localStorage.setItem('auth_token', keycloak.token);
-                            localStorage.setItem('refresh_token', keycloak.refershToken);
+                            localStorage.setItem('refresh_token', keycloak.refreshToken);
                             // try to get user info
                             keycloak.loadUserInfo().success(function(userInfo) {
                                 localStorage.setItem('userInfo', userInfo.name);
