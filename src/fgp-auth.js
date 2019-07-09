@@ -196,7 +196,7 @@ angular
                         initOptions.refreshToken = refreshToken;
                     }
 
-                    keycloak.init().success(function(authenticated) {
+                    keycloak.init(initOptions).success(function(authenticated) {
                         console.debug(authenticated ? 'authenticated' : 'not authenticated');
                         if (authenticated) {
                             // put token into local storage
