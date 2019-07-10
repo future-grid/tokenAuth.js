@@ -209,6 +209,13 @@ angular
                                 console.error('Failed to load user info');
                             });
 
+                        } else {
+                            //
+                            if(!token || token == ""){
+                                // redirect to login page
+                                keycloak.login();
+                            }
+
                         }
                         //
                     }).error(function() {

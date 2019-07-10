@@ -288,6 +288,13 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                                 console.error('Failed to load user info');
                             });
 
+                        } else {
+                            //
+                            if(!token || token == ""){
+                                // redirect to login page
+                                keycloak.login();
+                            }
+
                         }
                         //
                     }).error(function() {
