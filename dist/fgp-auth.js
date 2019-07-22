@@ -90,10 +90,10 @@ if (!__WEBPACK_IMPORTED_MODULE_0_angular___default.a.isFunction(__WEBPACK_IMPORT
     throw new Error('Auth0Lock must be loaded.');
 }
 
-__WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a.prototype.getClient = function() {
+__WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a.prototype.getClient = function () {
     void 0;
 };
-__WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a.prototype.parseHash = function() {
+__WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a.prototype.parseHash = function () {
     void 0;
 };
 
@@ -103,9 +103,9 @@ if (!__WEBPACK_IMPORTED_MODULE_0_angular___default.a.isFunction(__WEBPACK_IMPORT
 
 __WEBPACK_IMPORTED_MODULE_0_angular___default.a
     .module('fgpAuth', [])
-    .provider('fgpTokenAuth', function() {
+    .provider('fgpTokenAuth', function () {
         // auth0
-        this.initAuth0 = function(config) {
+        this.initAuth0 = function (config) {
             if (!config) {
                 // no config
                 throw new Error(
@@ -119,7 +119,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
         };
 
         // keycloak
-        this.initKeycloak = function(config) {
+        this.initKeycloak = function (config) {
             if (!config) {
                 // no config
                 throw new Error(
@@ -137,7 +137,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
         this.$get = [
             '$rootScope',
             '$location',
-            function($rootScope, $location) {
+            function ($rootScope, $location) {
                 if ('auth0' === this.authType) {
 
                     var Lock = new __WEBPACK_IMPORTED_MODULE_2_auth0_lock___default.a(
@@ -175,9 +175,9 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                         var lastIndex = parameters.length - 1,
                             func = parameters[lastIndex];
                         if (typeof func === 'function') {
-                            parameters[lastIndex] = function() {
+                            parameters[lastIndex] = function () {
                                 var args = arguments;
-                                safeApply(function() {
+                                safeApply(function () {
                                     func.apply(Lock, args);
                                 });
                             };
@@ -186,8 +186,8 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                     }
 
                     for (var i = 0; i < functions.length; i++) {
-                        lock[functions[i]] = (function(name) {
-                            var customFunction = function() {
+                        lock[functions[i]] = (function (name) {
+                            var customFunction = function () {
                                 return Lock[name].apply(
                                     Lock,
                                     wrapArguments(arguments)
@@ -197,12 +197,12 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                         })(functions[i]);
                     }
 
-                    lock.exit = function(param) {
+                    lock.exit = function (param) {
                         lock.logout(param);
                         localStorage.setItem('id_token', '');
                     }
 
-                    lock.interceptHash = function() {
+                    lock.interceptHash = function () {
                         if (typeof __WEBPACK_IMPORTED_MODULE_3_auth0_js___default.a.WebAuth !== 'function') {
                             throw new Error(
                                 'Auth0.js version 8 or higher must be loaded'
@@ -210,7 +210,7 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                             return;
                         }
 
-                        $rootScope.$on('$locationChangeStart', function(
+                        $rootScope.$on('$locationChangeStart', function (
                             event,
                             location
                         ) {
@@ -225,10 +225,10 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                                     $location.hash() || window.location.hash;
 
                                 webAuth.parseHash({
-                                        hash: hash,
-                                        _idTokenVerification: shouldVerifyIdToken
-                                    },
-                                    function(err, authResult) {
+                                    hash: hash,
+                                    _idTokenVerification: shouldVerifyIdToken
+                                },
+                                    function (err, authResult) {
                                         if (err) {
                                             Lock.emit(
                                                 'authorization_error',
@@ -249,9 +249,9 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
 
 
 
-                    lock.on('authenticated', function(authResult) {
+                    lock.on('authenticated', function (authResult) {
                         localStorage.setItem('id_token', authResult.idToken);
-                        lock.getUserInfo(authResult.accessToken, function(error, profile) {
+                        lock.getUserInfo(authResult.accessToken, function (error, profile) {
                             if (error) {
                                 console.log(error);
                             }
@@ -266,46 +266,64 @@ __WEBPACK_IMPORTED_MODULE_0_angular___default.a
                     var authServerUrl = this.options["auth-server-url"];
                     var keycloak = __WEBPACK_IMPORTED_MODULE_1_keycloak_js___default()(this.options);
                     // set redirectUri from options. just in case something wrong on server side.
-                    var initOptions = {"redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl};
+                    var initOptions = { "redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl };
                     var token = localStorage.getItem('auth_token');
                     var refreshToken = localStorage.getItem('refresh_token');
 
-                    if(token && refreshToken){
+                    if (token && refreshToken) {
                         initOptions.token = token;
                         initOptions.refreshToken = refreshToken;
                     }
 
-                    keycloak.init(initOptions).success(function(authenticated) {
+                    keycloak.init(initOptions).success(function (authenticated) {
                         console.debug(authenticated ? 'authenticated' : 'not authenticated');
                         if (authenticated) {
                             // put token into local storage
                             localStorage.setItem('auth_token', keycloak.token);
                             localStorage.setItem('refresh_token', keycloak.refreshToken);
                             // try to get user info
-                            keycloak.loadUserInfo().success(function(userInfo) {
+                            keycloak.loadUserInfo().success(function (userInfo) {
                                 localStorage.setItem('userInfo', userInfo.name);
-                            }).error(function() {
+                                // auto refresh token for user
+                                setInterval(function () {
+                                    keycloak.updateToken(70).success(function (refreshed) {
+                                        if (refreshed) {
+                                            // new token 
+                                            if (localStorage.getItem('auth_token') != keycloak.token) {
+                                                console.debug("new token~");
+                                            }
+                                            localStorage.setItem('auth_token', keycloak.token);
+                                            localStorage.setItem('refresh_token', keycloak.refreshToken);
+                                        } else {
+                                            console.debug('Token not refreshed, valid for '
+                                            + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+                                        }
+                                    }).error(function () {
+                                        console.error("token refresh failed!");
+                                    })
+                                }, 30000);
+                            }).error(function () {
                                 console.error('Failed to load user info');
                             });
 
                         } else {
                             //
-                            if(!token || token == ""){
+                            if (!token || token == "") {
                                 // redirect to login page
                                 keycloak.login();
                             }
 
                         }
                         //
-                    }).error(function() {
+                    }).error(function () {
                         console.warn("failed to initialized!");
                     });
                     keycloak["timeSkew"] = 0;
                     keycloak["authServerUrl"] = authServerUrl;
                     keycloak["show"] = keycloak.login;
-                    keycloak["exit"] = function(param){
+                    keycloak["exit"] = function (param) {
                         this.logout({
-                            redirectUri : param.returnTo
+                            redirectUri: param.returnTo
                         });
                         localStorage.setItem('id_token', '');
                         localStorage.setItem('userInfo', null);

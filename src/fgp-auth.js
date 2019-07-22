@@ -11,10 +11,10 @@ if (!angular.isFunction(Auth0Lock)) {
     throw new Error('Auth0Lock must be loaded.');
 }
 
-Auth0Lock.prototype.getClient = function() {
+Auth0Lock.prototype.getClient = function () {
     void 0;
 };
-Auth0Lock.prototype.parseHash = function() {
+Auth0Lock.prototype.parseHash = function () {
     void 0;
 };
 
@@ -24,9 +24,9 @@ if (!angular.isFunction(Keycloak)) {
 
 angular
     .module('fgpAuth', [])
-    .provider('fgpTokenAuth', function() {
+    .provider('fgpTokenAuth', function () {
         // auth0
-        this.initAuth0 = function(config) {
+        this.initAuth0 = function (config) {
             if (!config) {
                 // no config
                 throw new Error(
@@ -40,7 +40,7 @@ angular
         };
 
         // keycloak
-        this.initKeycloak = function(config) {
+        this.initKeycloak = function (config) {
             if (!config) {
                 // no config
                 throw new Error(
@@ -58,7 +58,7 @@ angular
         this.$get = [
             '$rootScope',
             '$location',
-            function($rootScope, $location) {
+            function ($rootScope, $location) {
                 if ('auth0' === this.authType) {
 
                     var Lock = new Auth0Lock(
@@ -96,9 +96,9 @@ angular
                         var lastIndex = parameters.length - 1,
                             func = parameters[lastIndex];
                         if (typeof func === 'function') {
-                            parameters[lastIndex] = function() {
+                            parameters[lastIndex] = function () {
                                 var args = arguments;
-                                safeApply(function() {
+                                safeApply(function () {
                                     func.apply(Lock, args);
                                 });
                             };
@@ -107,8 +107,8 @@ angular
                     }
 
                     for (var i = 0; i < functions.length; i++) {
-                        lock[functions[i]] = (function(name) {
-                            var customFunction = function() {
+                        lock[functions[i]] = (function (name) {
+                            var customFunction = function () {
                                 return Lock[name].apply(
                                     Lock,
                                     wrapArguments(arguments)
@@ -118,12 +118,12 @@ angular
                         })(functions[i]);
                     }
 
-                    lock.exit = function(param) {
+                    lock.exit = function (param) {
                         lock.logout(param);
                         localStorage.setItem('id_token', '');
                     }
 
-                    lock.interceptHash = function() {
+                    lock.interceptHash = function () {
                         if (typeof auth0.WebAuth !== 'function') {
                             throw new Error(
                                 'Auth0.js version 8 or higher must be loaded'
@@ -131,7 +131,7 @@ angular
                             return;
                         }
 
-                        $rootScope.$on('$locationChangeStart', function(
+                        $rootScope.$on('$locationChangeStart', function (
                             event,
                             location
                         ) {
@@ -146,10 +146,10 @@ angular
                                     $location.hash() || window.location.hash;
 
                                 webAuth.parseHash({
-                                        hash: hash,
-                                        _idTokenVerification: shouldVerifyIdToken
-                                    },
-                                    function(err, authResult) {
+                                    hash: hash,
+                                    _idTokenVerification: shouldVerifyIdToken
+                                },
+                                    function (err, authResult) {
                                         if (err) {
                                             Lock.emit(
                                                 'authorization_error',
@@ -170,9 +170,9 @@ angular
 
 
 
-                    lock.on('authenticated', function(authResult) {
+                    lock.on('authenticated', function (authResult) {
                         localStorage.setItem('id_token', authResult.idToken);
-                        lock.getUserInfo(authResult.accessToken, function(error, profile) {
+                        lock.getUserInfo(authResult.accessToken, function (error, profile) {
                             if (error) {
                                 console.log(error);
                             }
@@ -187,46 +187,64 @@ angular
                     var authServerUrl = this.options["auth-server-url"];
                     var keycloak = Keycloak(this.options);
                     // set redirectUri from options. just in case something wrong on server side.
-                    var initOptions = {"redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl};
+                    var initOptions = { "redirectUri": this.options.redirect_uri, "authServerUrl": authServerUrl };
                     var token = localStorage.getItem('auth_token');
                     var refreshToken = localStorage.getItem('refresh_token');
 
-                    if(token && refreshToken){
+                    if (token && refreshToken) {
                         initOptions.token = token;
                         initOptions.refreshToken = refreshToken;
                     }
 
-                    keycloak.init(initOptions).success(function(authenticated) {
+                    keycloak.init(initOptions).success(function (authenticated) {
                         console.debug(authenticated ? 'authenticated' : 'not authenticated');
                         if (authenticated) {
                             // put token into local storage
                             localStorage.setItem('auth_token', keycloak.token);
                             localStorage.setItem('refresh_token', keycloak.refreshToken);
                             // try to get user info
-                            keycloak.loadUserInfo().success(function(userInfo) {
+                            keycloak.loadUserInfo().success(function (userInfo) {
                                 localStorage.setItem('userInfo', userInfo.name);
-                            }).error(function() {
+                                // auto refresh token for user
+                                setInterval(function () {
+                                    keycloak.updateToken(70).success(function (refreshed) {
+                                        if (refreshed) {
+                                            // new token 
+                                            if (localStorage.getItem('auth_token') != keycloak.token) {
+                                                console.debug("new token~");
+                                            }
+                                            localStorage.setItem('auth_token', keycloak.token);
+                                            localStorage.setItem('refresh_token', keycloak.refreshToken);
+                                        } else {
+                                            console.debug('Token not refreshed, valid for '
+                                            + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+                                        }
+                                    }).error(function () {
+                                        console.error("token refresh failed!");
+                                    })
+                                }, 30000);
+                            }).error(function () {
                                 console.error('Failed to load user info');
                             });
 
                         } else {
                             //
-                            if(!token || token == ""){
+                            if (!token || token == "") {
                                 // redirect to login page
                                 keycloak.login();
                             }
 
                         }
                         //
-                    }).error(function() {
+                    }).error(function () {
                         console.warn("failed to initialized!");
                     });
                     keycloak["timeSkew"] = 0;
                     keycloak["authServerUrl"] = authServerUrl;
                     keycloak["show"] = keycloak.login;
-                    keycloak["exit"] = function(param){
+                    keycloak["exit"] = function (param) {
                         this.logout({
-                            redirectUri : param.returnTo
+                            redirectUri: param.returnTo
                         });
                         localStorage.setItem('id_token', '');
                         localStorage.setItem('userInfo', null);
